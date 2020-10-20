@@ -2,7 +2,7 @@
 
 Parsetagram is a photo sharing app similar to Instagram but using Parse as its backend.
 
-Time spent: 8 hours spent in total
+Time spent: 14 hours spent in total
 
 ## User Stories
 
@@ -15,9 +15,9 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [ ] User sees app icon in home screen and styled bottom navigation view
+- [x] User sees app icon in home screen and styled launch screen that looks like the real Instagram page. (2 points)
 - [ ] Style the feed to look like the real Instagram feed.
-- [ ] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse.
+- [x] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse.
 
 ## Video Walkthrough
 
@@ -26,10 +26,6 @@ Here's a walkthrough of implemented user stories:
 <img src='./gram1.gif' width='250'/>
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
-
-## Notes
-
-No challenges so far (up to required stories).
 
 ## Open-source libraries used
 

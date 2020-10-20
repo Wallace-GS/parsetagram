@@ -58,9 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = etUsername.getEditText().getText().toString();
-                String password = etPassword.getEditText().getText().toString();
-                signupUser(username, password);
+                signupUser();
             }
         });
     }
@@ -86,45 +84,49 @@ public class LoginActivity extends AppCompatActivity {
         };
     }
 
-    private void signupUser(String username, String password) {
-        ParseUser user = new ParseUser();
-        user.setUsername(username);
-        user.setPassword(password);
+    private void signupUser() {
+        String username = etUsername.getEditText().getText().toString();
+        String password = etPassword.getEditText().getText().toString();
 
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {
-                if (e != null) {
-                    String title = "Registration Failed";
-                    String message = e.getLocalizedMessage();
-                    showErrorDialog(title, message);
-                } else {
-                    showProgress();
-                    goMainActivity();
+        if (validateUserInput(username, password)) {
+            ParseUser user = new ParseUser();
+            user.setUsername(username);
+            user.setPassword(password);
+
+            user.signUpInBackground(new SignUpCallback() {
+                public void done(ParseException e) {
+                    if (e != null) {
+                        String title = "Registration Failed";
+                        String message = e.getLocalizedMessage();
+                        showErrorDialog(title, message);
+                    } else {
+                        showProgress();
+                        goMainActivity();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void loginUser() {
         String username = Objects.requireNonNull(etUsername.getEditText()).getText().toString();
         String password = Objects.requireNonNull(etPassword.getEditText()).getText().toString();
-        validateUserInput(username, password);
 
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (user != null) {
-                    showProgress();
-                    goMainActivity();
-                } else {
-                    String title = "Login Failed";
-                    String message = e.getLocalizedMessage();
-                    showErrorDialog(title, message);
+        if (validateUserInput(username, password)) {
+            ParseUser.logInInBackground(username, password, new LogInCallback() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    if (user != null) {
+                        showProgress();
+                        goMainActivity();
+                    } else {
+                        String title = "Login Failed";
+                        String message = e.getLocalizedMessage();
+                        showErrorDialog(title, message);
+                    }
                 }
-            }
-        });
-
-
+            });
+        }
     }
 
     private void goMainActivity() {
@@ -133,16 +135,19 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void validateUserInput(String username, String password) {
+    private boolean validateUserInput(String username, String password) {
         if (username.isEmpty()) {
             etUsername.setError("Username cannot be empty");
             btnLogin.setEnabled(false);
             btnSignup.setEnabled(false);
+            return false;
         } else if (password.isEmpty()) {
             etPassword.setError("Password cannot be empty");
             btnLogin.setEnabled(false);
             btnSignup.setEnabled(false);
+            return false;
         }
+        return true;
     }
 
     private void showProgress() {
