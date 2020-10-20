@@ -19,6 +19,13 @@ The following **optional** features are implemented:
 - [ ] Style the feed to look like the real Instagram feed.
 - [x] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse.
 
+The following **additional** features are implemented:
+
+- [x] Show user that he may not login/sign up if fields are left empty.
+- [x] Show user that he may not submit photos if fields are left empty.
+- [x] Display error dialog box if something goes wrong during login/registration
+- [x] Show progress bar on user login/sign up.
+
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
