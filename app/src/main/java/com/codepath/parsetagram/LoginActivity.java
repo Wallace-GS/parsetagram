@@ -22,7 +22,6 @@ import java.util.Objects;
 public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
-    public static final int INVALID_LOGIN = 101;
 
     private TextInputLayout etUsername;
     private TextInputLayout etPassword;
