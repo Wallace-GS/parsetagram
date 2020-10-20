@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Parsetagram</string>
-    <string name="button">Button</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="signup">Sign Up</string>
-    <string name="take_picture">Take Picture</string>
-    <string name="description">description</string>
-    <string name="submit">Submit</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="logo">logo</string>
     <string name="post_image">Post Image</string>
-    <string name="tell_us_about_this_pic">Tell us about this pic!</string>
+    <string name="caption">Caption</string>
+    <string name="submit">Submit</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="logout">Logout</string>
 </resources>

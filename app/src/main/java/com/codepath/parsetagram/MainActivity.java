@@ -7,17 +7,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -27,55 +30,50 @@ import com.parse.SaveCallback;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
-    private EditText etDescription;
-    private Button btnCaptureImage;
+
     private ImageView ivPostImage;
+    private TextInputLayout etDescription;
+    private Button btnCaptureImage;
     private Button btnSubmit;
     private Button btnLogout;
+    ProgressBar progressBar;
     private File photoFile;
-    private String photoFileName = "photo.jpg";
+    public String photoFileName = "photo.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ivPostImage = findViewById(R.id.ivPostImage);
         etDescription = findViewById(R.id.etDescription);
         btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        ivPostImage = findViewById(R.id.ivPostImage);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnLogout = findViewById(R.id.btnLogout);
+        progressBar = findViewById(R.id.progressBar);
 
+        Objects.requireNonNull(etDescription.getEditText()).addTextChangedListener(createTextWatcher(etDescription));
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 launchCamera();
             }
         });
-        
-//        queryPosts();
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String description = etDescription.getText().toString();
-
-                if (description.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Description cannot be empty", Toast.LENGTH_SHORT).show();
-                    return;
+                String description = Objects.requireNonNull(etDescription.getEditText()).getText().toString();
+                if (validateDescriptionInput(description)) {
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    savePost(description, currentUser, photoFile);
+                    showProgressBar();
                 }
-
-                if (photoFile == null || ivPostImage.getDrawable() == null) {
-                    Toast.makeText(MainActivity.this, "No image found!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, currentUser, photoFile);
             }
         });
 
@@ -86,12 +84,20 @@ public class MainActivity extends AppCompatActivity {
                 goLoginActivity();
             }
         });
+
+//        queryPosts();
     }
 
     private void goLoginActivity() {
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();
+    }
+
+    private void showProgressBar() {
+        etDescription.setVisibility(View.INVISIBLE);
+        btnSubmit.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     private void launchCamera() {
@@ -113,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 ivPostImage.setImageBitmap(takenImage);
+                etDescription.setVisibility(View.VISIBLE);
+                btnCaptureImage.setVisibility(View.INVISIBLE);
+                btnSubmit.setVisibility(View.VISIBLE);
+                btnLogout.setVisibility(View.INVISIBLE);
             } else {
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -126,9 +136,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "failed to create directory");
         }
 
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return file;
+        return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
 
     private void savePost(String description, ParseUser currentUser, File photoFile) {
@@ -141,13 +149,46 @@ public class MainActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Error while saving", e);
-                    Toast.makeText(MainActivity.this, "Error while saving!", Toast.LENGTH_SHORT).show();
+                    // TODO: add dialog box
                 }
-                Log.i(TAG, "Save Successful!");
-                etDescription.setText("");
+                Log.i(TAG, "Post success");
+                Objects.requireNonNull(etDescription.getEditText()).setText("");
                 ivPostImage.setImageResource(0);
+                progressBar.setVisibility(View.INVISIBLE);
+                etDescription.setVisibility(View.INVISIBLE);
+                btnSubmit.setVisibility(View.INVISIBLE);
+                btnCaptureImage.setVisibility(View.VISIBLE);
+                btnLogout.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private TextWatcher createTextWatcher(final TextInputLayout text) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // not needed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                text.setError(null);
+                btnSubmit.setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // not needed
+            }
+        };
+    }
+    private boolean validateDescriptionInput(String description) {
+        if (description.isEmpty()) {
+            etDescription.setError("Description cannot be empty");
+            btnSubmit.setEnabled(false);
+            return false;
+        }
+        return true;
     }
 
     private void queryPosts() {
@@ -157,13 +198,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Isuue with getting posts", e);
+                    Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
+
                 for (Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getKeyDescription() + " User: " + post.getKeyUser().getUsername());
+                    Log.i(TAG, "Post by " + post.getUser().getUsername() + ": " + post.getDescription());
                 }
             }
         });
     }
 }
+
+// TODO: add cancel button next to submit?
