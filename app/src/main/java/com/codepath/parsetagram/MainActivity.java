@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.actionCompose:
                         fragment = new ComposeFragment();
                         break;
+                    case R.id.actionSettings:
+                        fragment = new ComposeFragment();
+                        break;
                     case R.id.actionProfile:
                     default:
                         fragment = new ProfileFragment();
