@@ -1,5 +1,6 @@
 package com.codepath.parsetagram;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import com.codepath.parsetagram.fragments.ComposeFragment;
 import com.codepath.parsetagram.fragments.PostsFragment;
 import com.codepath.parsetagram.fragments.ProfileFragment;
+import com.codepath.parsetagram.fragments.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ComposeFragment();
                         break;
                     case R.id.actionSettings:
-                        fragment = new ComposeFragment();
+                        fragment = new SettingsFragment();
                         break;
                     case R.id.actionProfile:
                     default:
@@ -49,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         bottomNav.setSelectedItemId(R.id.actionHome);
+    }
+
+    protected void goLoginActivity() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 }
 

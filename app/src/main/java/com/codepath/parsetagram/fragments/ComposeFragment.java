@@ -48,7 +48,6 @@ public class ComposeFragment extends Fragment {
     private TextInputLayout etDescription;
     private Button btnCaptureImage;
     private Button btnSubmit;
-    private Button btnLogout;
     private ProgressBar progressBar;
     private File photoFile;
     public String photoFileName = "photo.jpg";
@@ -71,7 +70,6 @@ public class ComposeFragment extends Fragment {
         etDescription = view.findViewById(R.id.etDescription);
         btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
         btnSubmit = view.findViewById(R.id.btnSubmit);
-        btnLogout = view.findViewById(R.id.btnLogout);
         progressBar = view.findViewById(R.id.progressBar);
 
         Objects.requireNonNull(etDescription.getEditText()).addTextChangedListener(createTextWatcher(etDescription));
@@ -93,20 +91,8 @@ public class ComposeFragment extends Fragment {
                 }
             }
         });
-//        btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ParseUser.logOut();
-//                goLoginActivity();
-//            }
-//        });
     }
 
-//    private void goLoginActivity() {
-//        Intent i = new Intent(this, LoginActivity.class);
-//        startActivity(i);
-//        finish();
-//    }
 
     private void showProgressBar() {
         etDescription.setVisibility(View.INVISIBLE);
@@ -136,7 +122,6 @@ public class ComposeFragment extends Fragment {
                 etDescription.setVisibility(View.VISIBLE);
                 btnCaptureImage.setVisibility(View.INVISIBLE);
                 btnSubmit.setVisibility(View.VISIBLE);
-                btnLogout.setVisibility(View.INVISIBLE);
             } else {
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -172,7 +157,6 @@ public class ComposeFragment extends Fragment {
                 etDescription.setVisibility(View.INVISIBLE);
                 btnSubmit.setVisibility(View.INVISIBLE);
                 btnCaptureImage.setVisibility(View.VISIBLE);
-                btnLogout.setVisibility(View.VISIBLE);
             }
         });
     }

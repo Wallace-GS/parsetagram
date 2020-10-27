@@ -30,8 +30,9 @@ public class ProfileFragment extends PostsFragment {
                 for (Post post : posts) {
                     Log.i(TAG, "Post by " + post.getUser().getUsername() + ": " + post.getDescription());
                 }
-                allPosts.addAll(posts);
-                adapter.notifyDataSetChanged();
+                adapter.clear();
+                adapter.addAll(posts);
+                swipeContainer.setRefreshing(false);
             }
         });
     }
